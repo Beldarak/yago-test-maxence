@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+
+    <!-- Vue material (+ Roboto Font and Icons) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/vue-material.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/theme/default.css">
+
+    <title>Assurance Sim</title>
+</head>
+<body>
+    <div id="app">
+        <h1>{{ message }}</h1>
+        <div>
+            <input v-model.number="number1">
+        </div>
+        <div>{{number1}} + {{number2}} = {{sum}}</div>
+
+        <md-list>
+            <md-list-item>
+              <md-icon>move_to_inbox</md-icon>
+              <span class="md-list-item-text">Inbox</span>
+            </md-list-item>
+      
+            <md-card>
+                <md-card-header>
+                  <div class="md-title">Card without hover effect</div>
+                </md-card-header>
+          
+                <md-card-content>
+                    Ceiling: {{ coverageCeiling }}
+                </md-card-content>
+            </md-card>
+        </md-list>
+    </div>
+    <script src="https://unpkg.com/vue@2.5.22"></script><!-- J'utilise la version 2.5 car la plupart des librairies ne sont pas prêtes pour Vue3-->
+    <script src="https://unpkg.com/vue-material"></script>
+    <script>
+
+        Vue.use(VueMaterial.default)
+
+        const app = new Vue({
+            el: '#app',
+            data: {
+                message: "Hello",
+                number1: 10,
+                number2: 20,
+                coverageCeiling: null,
+            },
+            computed: {
+                sum() {
+                    return this.number1 + this.number2
+                }
+            },
+            mounted() {
+                this.loadData()
+            },
+            methods: {
+                loadData() {
+                    //API KEY: fABF1NGkfn5fpHuJHrbvG3niQX6A1CO53ftF9ASD
+                    const requestOptions = {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" , "X-Api-Key": "fABF1NGkfn5fpHuJHrbvG3niQX6A1CO53ftF9ASD"},
+                        body: JSON.stringify({
+                            "annualRevenue": 80000,
+                            "enterpriseNumber": "0649885171",
+                            "legalName": "example SA",
+                            "naturalPerson": true,
+                            "nacebelCodes": ["62010", "62020", "62030", "62090", "63110"]
+                        })
+                    };
+                    fetch("https://staging-gtw.seraphin.be/quotes/professional-liability", requestOptions)
+                    .then(response => response.json())
+                    .then(promise => {
+                        console.log(promise.data)
+                        this.coverageCeiling = promise.data.coverageCeiling
+                    });
+
+                }
+            }
+        })
+    </script>
+</body>
+</html>
