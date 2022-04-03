@@ -17,6 +17,15 @@ body {
     border: solid #9bf0a9 2px !important;
 }
 
+.chip_selected {
+    background-color: #9bf0a9 !important;
+}
+
+.clickable_chip {
+   margin-bottom: 5px;
+   user-select: none;
+}
+
 .icon_check {
     float: right;
     color: #2d2dcc !important;
@@ -25,6 +34,7 @@ body {
 .price_total {
     border-radius: 30px;
     margin: -15px !important;
+    margin-top: 10px !important;
     background-color: #9bf0a9;
     text-align: center;
 }

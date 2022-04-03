@@ -27,7 +27,7 @@
                     <div class="md-layout-item md-small-size-100" v-for="cover in mainCovers" :key="cover.name">
                         <md-card v-bind:class="{ card_selected: cover.selected }">
                             <!-- Tooltip -->
-                            <md-tooltip style="font-size: 12px" md-direction="top">{{ cover.details }}</md-tooltip>
+                            <md-tooltip style="font-size: 12px" md-direction="top" v-if="cover.details && cover.details != ''">{{ cover.details }}</md-tooltip>
 
                             <!-- Title and content -->
                             <md-card-header class="md-title">
@@ -51,6 +51,48 @@
                     Additional covers
                 </md-card-header>
 
+                <md-card-content>
+
+                    <!-- List of main covers -->
+                    <div class="md-layout-item md-small-size-100" v-for="cover in additionalCovers" :key="cover.name">
+                        <!-- Tooltip -->
+                        <md-tooltip style="font-size: 12px" md-direction="top" v-if="cover.details && cover.details != ''">{{ cover.details }}</md-tooltip>
+
+                        <!-- Content of the cover -->
+                        <md-chip
+                            id="checkbox_1"
+                            v-bind:class="{ chip_selected: cover.selected }"
+                            @click="cover.selected = !cover.selected"
+                            class="clickable_chip"
+                            md-clickable
+                        >
+                            <table style="table-layout: fixed; width: 200px;">
+                                <tr>
+                                    <td style="width: 25px; margin: 0; padding: 0"><input type="checkbox" v-model="cover.selected"></td>
+                                    <td style="width: 100px;">{{ cover.name }}</td>
+                                    <td style="width: 25px;"><md-icon>arrow_right</md-icon></td>
+                                    <td style="width: 25px;">{{ cover.price }} €</td>
+                                </tr>
+                            </table>
+                        </md-chip>
+                    </div>
+
+                </md-card-content>
+
+                <!-- Deductible -->
+                <md-card-content>
+                    <div>
+                        Deductible: 
+                    </div>
+                </md-card-content>
+
+                <!-- Coverage ceiling -->
+                <md-card-content>
+                    <div>
+                        Coverage ceiling: 
+                    </div>
+                </md-card-content>
+
                 <!-- Total -->
                 <md-card-header class="md-title price_total">
                     Total: {{ totalPrice }} €
@@ -62,7 +104,6 @@
     <script src="https://unpkg.com/vue@2.5.22"></script><!-- J'utilise la version 2.5 car la plupart des librairies ne sont pas prêtes pour Vue3-->
     <script src="https://unpkg.com/vue-material"></script>
     <script>
-
         Vue.use(VueMaterial.default)
 
         const app = new Vue({
@@ -73,13 +114,11 @@
                     {
                         selected: true,
                         name: "Pro indemnity",
-                        details: "Professional indemnity insurance, often referred to as professional liability insurance or PI insurance, covers legal costs and expenses incurred in your defence, as well as any damages or costs that may be awarded, if you are alleged to have provided inadequate advice, services or designs that cause your client to lose money.",
                         price: 290
                     },
                     {
                         selected: false,
                         name: "Public liability",
-                        details: "Public liability insurance is a type of business insurance that covers the cost of claims made by the public that happen in connection with your business activities.",
                         price: 130
                     }
                 ],
@@ -87,9 +126,21 @@
                 additionalCovers: [
                     {
                         selected: false,
-                        name: "Public liability",
-                        details: "Public liability insurance is a type of business insurance that covers the cost of claims made by the public that happen in connection with your business activities.",
-                        price: 130
+                        name: "Entrusted objects",
+                        details: "The Entrusted objects cover is here to...",
+                        price: 53
+                    },
+                    {
+                        selected: false,
+                        name: "Legal expenses",
+                        details: "The legal expenses cover is used in case of...",
+                        price: 13
+                    },
+                    {
+                        selected: true,
+                        name: "After delivery",
+                        details: "After delivery's cover cover the cost of...",
+                        price: 20
                     }
                 ],
                 // Misc.
@@ -104,6 +155,12 @@
                     for(let i = 0; i < this.mainCovers.length; i++) {
                         if(this.mainCovers[i].selected) {
                             sum += this.mainCovers[i].price
+                        }
+                    }
+
+                    for(let i = 0; i < this.additionalCovers.length; i++) {
+                        if(this.additionalCovers[i].selected) {
+                            sum += this.additionalCovers[i].price
                         }
                     }
 
