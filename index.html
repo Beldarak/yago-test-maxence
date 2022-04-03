@@ -7,34 +7,58 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
     <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/vue-material.min.css">
     <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/theme/default.css">
+    <link rel="stylesheet" href="css/main.css">
 
     <title>Assurance Sim</title>
 </head>
 <body>
     <div id="app">
-        <h1>{{ message }}</h1>
-        <div>
-            <input v-model.number="number1">
-        </div>
-        <div>{{number1}} + {{number2}} = {{sum}}</div>
+        <form novalidate class="md-layout" @submit.prevent="validateUser" style="display: flex; justify-content: center;">
+            <md-card class="md-layout-item md-size-40 md-small-size-100">
 
-        <md-list>
-            <md-list-item>
-              <md-icon>move_to_inbox</md-icon>
-              <span class="md-list-item-text">Inbox</span>
-            </md-list-item>
-      
-            <md-card>
-                <md-card-header>
-                  <div class="md-title">Card without hover effect</div>
+                <!-- Main covers -->
+                <md-card-header class="md-title">
+                    Your RC PRO main covers
                 </md-card-header>
-          
-                <md-card-content>
-                    Ceiling: {{ coverageCeiling }}
+            
+                <md-card-content class="md-layout md-gutter">
+
+                    <!-- List of main covers -->
+                    <div class="md-layout-item md-small-size-100" v-for="cover in mainCovers" :key="cover.name">
+                        <md-card v-bind:class="{ card_selected: cover.selected }">
+                            <!-- Tooltip -->
+                            <md-tooltip style="font-size: 12px" md-direction="top">{{ cover.details }}</md-tooltip>
+
+                            <!-- Title and content -->
+                            <md-card-header class="md-title">
+                                {{ cover.name }}
+                                <md-icon class="icon_check" v-if="cover.selected">check</md-icon>
+                            </md-card-header>
+                            <md-card-content>{{ cover.price }} €</md-card-content>
+
+                            <!-- Selection button -->
+                            <md-button class="select_button" v-bind:class="{ button_selected: cover.selected}" @click="cover.selected = !cover.selected">
+                                <div v-if="cover.selected">Deselect</div>
+                                <div v-else>Select</div>
+                            </md-button>
+                        </md-card>
+                    </div>
+
                 </md-card-content>
+
+                <!-- Additional covers -->
+                <md-card-header class="md-title">
+                    Additional covers
+                </md-card-header>
+
+                <!-- Total -->
+                <md-card-header class="md-title price_total">
+                    Total: {{ totalPrice }} €
+                </md-card-header>
             </md-card>
-        </md-list>
+        </form>
     </div>
+
     <script src="https://unpkg.com/vue@2.5.22"></script><!-- J'utilise la version 2.5 car la plupart des librairies ne sont pas prêtes pour Vue3-->
     <script src="https://unpkg.com/vue-material"></script>
     <script>
@@ -44,22 +68,56 @@
         const app = new Vue({
             el: '#app',
             data: {
-                message: "Hello",
-                number1: 10,
-                number2: 20,
-                coverageCeiling: null,
+                // Main covers
+                mainCovers: [
+                    {
+                        selected: true,
+                        name: "Pro indemnity",
+                        details: "Professional indemnity insurance, often referred to as professional liability insurance or PI insurance, covers legal costs and expenses incurred in your defence, as well as any damages or costs that may be awarded, if you are alleged to have provided inadequate advice, services or designs that cause your client to lose money.",
+                        price: 290
+                    },
+                    {
+                        selected: false,
+                        name: "Public liability",
+                        details: "Public liability insurance is a type of business insurance that covers the cost of claims made by the public that happen in connection with your business activities.",
+                        price: 130
+                    }
+                ],
+                // Additional covers
+                additionalCovers: [
+                    {
+                        selected: false,
+                        name: "Public liability",
+                        details: "Public liability insurance is a type of business insurance that covers the cost of claims made by the public that happen in connection with your business activities.",
+                        price: 130
+                    }
+                ],
+                // Misc.
+                deductible: "small",
+                coverageCeiling: "large",
             },
+
             computed: {
-                sum() {
-                    return this.number1 + this.number2
-                }
+                totalPrice() {
+                    let sum = 0
+
+                    for(let i = 0; i < this.mainCovers.length; i++) {
+                        if(this.mainCovers[i].selected) {
+                            sum += this.mainCovers[i].price
+                        }
+                    }
+
+                    return sum
+                },
             },
+
             mounted() {
-                this.loadData()
+                this.getQuote()
             },
+
             methods: {
-                loadData() {
-                    //API KEY: fABF1NGkfn5fpHuJHrbvG3niQX6A1CO53ftF9ASD
+                // Call the API
+                getQuote() {
                     const requestOptions = {
                         method: "POST",
                         headers: { "Content-Type": "application/json" , "X-Api-Key": "fABF1NGkfn5fpHuJHrbvG3niQX6A1CO53ftF9ASD"},

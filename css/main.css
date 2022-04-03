@@ -1,0 +1,30 @@
+
+body {
+    margin: 40px;
+}
+
+.select_button {
+    width: 100%;
+    margin: 0;
+    background-color: #eee;
+}
+
+.button_selected {
+    background-color: #9bf0a9;
+}
+
+.card_selected {
+    border: solid #9bf0a9 2px !important;
+}
+
+.icon_check {
+    float: right;
+    color: #2d2dcc !important;
+}
+
+.price_total {
+    border-radius: 30px;
+    margin: -15px !important;
+    background-color: #9bf0a9;
+    text-align: center;
+}
